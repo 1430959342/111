@@ -124,7 +124,7 @@ def _search_newsapi(query: str, market: str) -> list[NewsItem]:
 
     try:
         resp = requests.get(url, params=params, timeout=15)
-        logger.debug(f"  NewsAPI HTTP {resp.status_code}: q={query[:30]}")
+        logger.info(f"  NewsAPI HTTP {resp.status_code}: q={query[:30]}")
 
         if resp.status_code == 401:
             logger.error("  NewsAPI 认证失败：API Key 无效或未激活（注册后需等待几分钟）")
