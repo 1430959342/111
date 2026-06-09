@@ -112,11 +112,26 @@ def _search_newsapi(query: str, market: str) -> list[NewsItem]:
     API文档: https://newsapi.org/docs/endpoints/top-headlines
     """
     url = "https://newsapi.org/v2/top-headlines"
+
+    # 根据市场选择国家和语言
+    if market == "A股":
+        country = "cn"
+    elif market == "港股":
+        country = "hk"
+    elif market == "美股" or market == "全球":
+        country = "us"
+    else:
+        country = None
+
     params = {
-        "q": query,
+        "category": "business",
         "pageSize": config.ARTICLES_PER_QUERY,
         "apiKey": config.NEWSAPI_KEY,
     }
+    if country:
+        params["country"] = country
+    if query:
+        params["q"] = query
 
     try:
         resp = requests.get(url, params=params, timeout=15)
