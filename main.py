@@ -56,12 +56,12 @@ def main():
     result = rank_news(raw_news)
 
     top10 = result.get("top10", [])
-    # 如果 AI 返回不足 5 条，用原始新闻补齐到 10 条
-    if len(top10) < 5:
+    # 如果 AI 返回不足 3 条，用原始新闻补齐到 8 条
+    if len(top10) < 3:
         logger.warning(f"⚠️ AI 仅返回 {len(top10)} 条，用原始新闻补齐")
         next_rank = len(top10) + 1
         for item in raw_news:
-            if len(top10) >= 10:
+            if len(top10) >= 8:
                 break
             # 跳过已经在 AI 结果中的 URL
             existing_urls = {t.get("url", "") for t in top10}
