@@ -18,7 +18,7 @@ IMPACT_COLORS = {"高": "#e74c3c", "中": "#f39c12", "低": "#3498db"}
 IMPACT_LABELS = {"高": "🔥 高影响", "中": "⭐ 中等", "低": "📌 关注"}
 
 # 市场标签颜色
-MARKET_COLORS = {"A股": "#e74c3c", "美股": "#2980b9", "港股": "#27ae60"}
+MARKET_COLORS = {"A股": "#e74c3c", "美股": "#2980b9", "港股": "#27ae60", "黄金": "#f39c12"}
 
 
 def send_email(result: dict) -> bool:
@@ -121,8 +121,8 @@ def _build_html(result: dict) -> str:
 
     # 市场概况
     summary_html = ""
-    market_icons = {"A股": "🇨🇳", "美股": "🇺🇸", "港股": "🇭🇰"}
-    for market in ["A股", "美股", "港股"]:
+    market_icons = {"A股": "🇨🇳", "美股": "🇺🇸", "港股": "🇭🇰", "黄金": "🥇"}
+    for market in ["A股", "美股", "港股", "黄金"]:
         text = summary.get(market, "暂无数据")
         icon = market_icons.get(market, "📊")
         summary_html += (

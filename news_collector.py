@@ -1,7 +1,7 @@
 """
 新闻采集模块
 从 NewsAPI / Bing Search API 搜索全球资本市场新闻
-支持 A股、美股、港股三个市场的多关键词搜索
+支持 A股、美股、港股、黄金四个市场的多关键词搜索
 """
 
 import logging
@@ -120,6 +120,9 @@ def _search_newsapi(query: str, market: str) -> list[NewsItem]:
         country = "hk"
     elif market == "美股" or market == "全球":
         country = "us"
+    elif market == "黄金":
+        # 黄金全球交易，不限国家，靠关键词过滤
+        country = None
     else:
         country = None
 

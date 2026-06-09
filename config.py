@@ -84,6 +84,11 @@ SEARCH_QUERIES = {
         "港股 恒生指数 恒生科技",
         "Hong Kong stock market China policy",
     ],
+    "黄金": [
+        "gold price COMEX spot today Federal Reserve",
+        "黄金价格 上海金交所 国际金价 今日",
+        "gold inflation hedge central bank buying",
+    ],
 }
 
 # 每次搜索返回的文章数
