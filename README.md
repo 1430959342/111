@@ -5,7 +5,7 @@
 ## ✨ 特性
 
 - 🌍 **全球覆盖**：A股、美股、港股三大市场
-- 🤖 **AI 筛选**：Claude API 按资本市场影响力自动排序 TOP10
+- 🤖 **AI 筛选**：DeepSeek API 按资本市场影响力自动排序 TOP10
 - 📧 **邮件推送**：精美的 HTML 邮件，支持移动端阅读
 - ⏰ **定时运行**：GitHub Actions 每天北京时间 11:00 自动触发
 - 💰 **零成本运行**：使用免费 API 额度，无需服务器
@@ -23,10 +23,10 @@
 - **NewsAPI**（推荐）：访问 https://newsapi.org/register 注册，免费 100 次/天
 - **Bing Search API**：Azure 门户创建 Bing Search 资源，免费 1000 次/月
 
-#### Anthropic API（必填）
+#### DeepSeek API（必填）
 
-访问 https://console.anthropic.com/ 注册并获取 API Key。
-默认使用 `claude-haiku` 模型（最经济），也可改为其他模型。
+访问 https://platform.deepseek.com/ 注册并获取 API Key。
+新用户赠送 500 万 tokens，默认使用 `deepseek-chat` 模型，也可改为 `deepseek-reasoner`。
 
 #### QQ 邮箱授权码（必填）
 
@@ -45,7 +45,7 @@
 |-------------|------|:---:|
 | `NEWSAPI_KEY` | NewsAPI 的 API Key | 二选一 |
 | `BING_SEARCH_API_KEY` | Bing Search API Key | 二选一 |
-| `ANTHROPIC_API_KEY` | Anthropic API Key | ✅ |
+| `DEEPSEEK_API_KEY` | DeepSeek API Key | ✅ |
 | `QQ_EMAIL_SENDER` | 发件人 QQ 邮箱地址 | ✅ |
 | `QQ_EMAIL_PASSWORD` | QQ 邮箱 SMTP 授权码 | ✅ |
 | `QQ_EMAIL_RECEIVER` | 收件人邮箱地址 | ✅ |
@@ -96,7 +96,7 @@ python main.py --dry-run # 预览模式，不发送邮件
 
 | 环境变量 | 默认值 | 说明 |
 |---------|--------|------|
-| `ANTHROPIC_MODEL` | `claude-haiku` | AI 模型，可选 `claude-sonnet` |
+| `DEEPSEEK_MODEL` | `deepseek-chat` | AI 模型，可选 `deepseek-reasoner` |
 | `LOG_LEVEL` | `INFO` | 日志级别：DEBUG/INFO/WARNING/ERROR |
 
 编辑 `.github/workflows/daily-news.yml` 中的 `cron` 可修改推送时间。
@@ -106,7 +106,7 @@ python main.py --dry-run # 预览模式，不发送邮件
 | 项目 | 用量 | 月成本 |
 |------|------|:-----:|
 | NewsAPI | ~240 次/月（8次/天） | 免费 |
-| Claude Haiku | ~150K tokens/月 | ≈$0.1 |
+| DeepSeek Chat | ~150K tokens/月 | ≈¥0.1 |
 | GitHub Actions | ~150 分钟/月 | 免费* |
 | QQ 邮箱 SMTP | 30 封/月 | 免费 |
 

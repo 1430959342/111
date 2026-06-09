@@ -32,8 +32,8 @@ jobs:
           # 搜索 API（二选一）
           NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
           BING_SEARCH_API_KEY: ${{ secrets.BING_SEARCH_API_KEY }}
-          # Anthropic API
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # DeepSeek API
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           # QQ 邮箱
           QQ_EMAIL_SENDER: ${{ secrets.QQ_EMAIL_SENDER }}
           QQ_EMAIL_PASSWORD: ${{ secrets.QQ_EMAIL_PASSWORD }}

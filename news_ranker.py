@@ -1,6 +1,6 @@
 """
 AI 筛选排序模块
-调用 Anthropic Claude API 对新闻去重、筛选、按资本市场影响力排序
+调用 DeepSeek API 对新闻去重、筛选、按资本市场影响力排序
 输出 TOP10 结构化数据
 """
 
@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-import anthropic
+from openai import OpenAI
 
 import config
 from news_collector import NewsItem
@@ -80,25 +80,31 @@ def rank_news(news_items: list[NewsItem]) -> dict:
         logger.warning("没有新闻数据可供排序")
         return _empty_result()
 
-    logger.info(f"  正在用 AI 分析 {len(news_items)} 条新闻...")
+    logger.info(f"  正在用 DeepSeek AI 分析 {len(news_items)} 条新闻...")
 
     # 构建用户消息
     news_text = _format_news_for_prompt(news_items)
 
     try:
-        client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
-
-        message = client.messages.create(
-            model=config.ANTHROPIC_MODEL,
-            max_tokens=4096,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": news_text}],
+        client = OpenAI(
+            api_key=config.DEEPSEEK_API_KEY,
+            base_url=config.DEEPSEEK_BASE_URL,
         )
 
-        response_text = message.content[0].text
+        response = client.chat.completions.create(
+            model=config.DEEPSEEK_MODEL,
+            max_tokens=4096,
+            temperature=0.3,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": news_text},
+            ],
+        )
+
+        response_text = response.choices[0].message.content
         result = _parse_response(response_text)
 
-        logger.info(f"  AI 排序完成，输出 TOP{len(result.get('top10', []))}")
+        logger.info(f"  DeepSeek AI 排序完成，输出 TOP{len(result.get('top10', []))}")
         return result
 
     except Exception as e:

@@ -36,7 +36,7 @@ def main():
     logger.info("🚀 每日资本市场热点新闻 TOP10 推送系统")
     logger.info(f"   运行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (UTC)")
     logger.info(f"   搜索源: {config.SEARCH_PROVIDER}")
-    logger.info(f"   AI模型: {config.ANTHROPIC_MODEL}")
+    logger.info(f"   AI模型: {config.DEEPSEEK_MODEL} (DeepSeek)")
     logger.info(f"   发送邮箱: {config.QQ_EMAIL_RECEIVER}")
     logger.info(f"   Dry Run: {args.dry_run}")
     logger.info("=" * 60)

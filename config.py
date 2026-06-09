@@ -44,10 +44,11 @@ if not NEWSAPI_KEY and not BING_SEARCH_API_KEY:
 SEARCH_PROVIDER = "newsapi" if NEWSAPI_KEY else "bing"
 
 # ============================================================
-# Anthropic API 配置
+# DeepSeek API 配置
 # ============================================================
-ANTHROPIC_API_KEY = _require("ANTHROPIC_API_KEY")
-ANTHROPIC_MODEL = _optional("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
+DEEPSEEK_API_KEY = _require("DEEPSEEK_API_KEY")
+DEEPSEEK_MODEL = _optional("DEEPSEEK_MODEL", "deepseek-chat")
+DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 
 # ============================================================
 # QQ 邮箱配置
