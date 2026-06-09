@@ -70,7 +70,7 @@ def main():
             top10.append({
                 "rank": next_rank,
                 "title": item.title,
-                "summary": item.description[:100] if item.description else "",
+                "summary": item.description[:300] if item.description else "",
                 "source": item.source,
                 "url": item.url,
                 "impact_level": "低",

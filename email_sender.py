@@ -89,23 +89,33 @@ def _build_html(result: dict) -> str:
             )
 
         cards_html += f"""
-        <div style="border-left:4px solid {impact_color}; margin-bottom:20px; padding:12px 16px;
-                    background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-            <div style="display:flex; align-items:center; margin-bottom:6px;">
-                <span style="background:{impact_color}; color:#fff; font-size:13px; font-weight:bold;
-                      width:26px; height:26px; display:inline-flex; align-items:center;
-                      justify-content:center; border-radius:50%; margin-right:10px; flex-shrink:0;">{rank}</span>
-                <a href="{url}" style="color:#1a1a1a; text-decoration:none; font-size:16px;
-                      font-weight:600; line-height:1.4;">{title}</a>
-            </div>
-            <p style="color:#555; font-size:13px; margin:8px 0; line-height:1.5;">{desc}</p>
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;">
-                <div style="display:flex; align-items:center; gap:6px;">
-                    {market_tags}
-                    <span style="font-size:12px; color:#999; margin-right:8px;">📰 {source}</span>
-                    <span style="font-size:11px; color:{impact_color};">{impact_label}</span>
+        <div style="border-left:4px solid {impact_color}; margin-bottom:24px; padding:16px 20px;
+                    background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <!-- 标题行 -->
+            <div style="display:flex; align-items:flex-start; margin-bottom:10px;">
+                <span style="background:{impact_color}; color:#fff; font-size:14px; font-weight:bold;
+                      min-width:28px; height:28px; display:inline-flex; align-items:center;
+                      justify-content:center; border-radius:50%; margin-right:12px; flex-shrink:0;
+                      margin-top:2px;">{rank}</span>
+                <div>
+                    <a href="{url}" style="color:#1a1a1a; text-decoration:none; font-size:17px;
+                          font-weight:700; line-height:1.5;">{title}</a>
+                    <div style="margin-top:4px;">
+                        {market_tags}
+                        <span style="font-size:12px; color:{impact_color}; font-weight:600;">{impact_label}</span>
+                    </div>
                 </div>
-                <span style="font-size:11px; color:#aaa;">{reason}</span>
+            </div>
+            <!-- 摘要正文 -->
+            <div style="color:#333; font-size:14px; line-height:1.8; margin:12px 0;
+                        padding:10px 14px; background:#f8f9fa; border-radius:6px;">
+                {desc}
+            </div>
+            <!-- 底部信息 -->
+            <div style="display:flex; align-items:center; justify-content:space-between;
+                        font-size:12px; color:#888; margin-top:8px;">
+                <span>📰 {source}</span>
+                <span style="color:#666;">💡 {reason}</span>
             </div>
         </div>"""
 
@@ -154,7 +164,7 @@ def _build_html(result: dict) -> str:
     <!-- AI 提示 -->
     <div style="background:#fef9e7; border:1px solid #f9e79f; border-radius:8px; padding:12px 16px;
                 margin-top:20px; font-size:12px; color:#7d6608;">
-        🤖 本报告由 AI（Claude）自动生成，基于公开新闻源聚合筛选。<br>
+        🤖 本报告由 AI（DeepSeek）自动生成，基于公开新闻源聚合筛选。<br>
         ⚠️ 内容仅供参考，不构成任何投资建议。投资有风险，入市需谨慎。
     </div>
 </div>

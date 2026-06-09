@@ -53,13 +53,13 @@ SYSTEM_PROMPT = """你是一位资深全球资本市场分析师，你的任务�
   "top10": [
     {
       "rank": 1,
-      "title": "新闻标题（中文，简洁准确）",
-      "summary": "50字以内摘要，说清事件和影响",
+      "title": "新闻标题（中文，简洁准确，20字以内）",
+      "summary": "详细摘要，150-200字：包含事件背景、关键数据/政策细节、对市场的具体影响。让读者不用点原文就能了解全貌",
       "source": "来源媒体名称",
       "url": "原文链接",
       "impact_level": "高",
       "impact_market": ["A股", "美股"],
-      "impact_reason": "一句话解释为什么重要"
+      "impact_reason": "一句话解释为什么对资本市场重要"
     }
   ]
 }
@@ -98,7 +98,7 @@ def rank_news(news_items: list[NewsItem]) -> dict:
 
         response = client.chat.completions.create(
             model=config.DEEPSEEK_MODEL,
-            max_tokens=4096,
+            max_tokens=8192,
             temperature=0.3,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
