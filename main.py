@@ -56,23 +56,32 @@ def main():
     result = rank_news(raw_news)
 
     top10 = result.get("top10", [])
-    if not top10:
-        logger.error("❌ AI 排序后无结果")
-        # 输出原始数据的前10条作为兜底
-        logger.info("使用原始排序前10条作为替代")
-        result["top10"] = [
-            {
-                "rank": i + 1,
+    # 如果 AI 返回不足 5 条，用原始新闻补齐到 10 条
+    if len(top10) < 5:
+        logger.warning(f"⚠️ AI 仅返回 {len(top10)} 条，用原始新闻补齐")
+        next_rank = len(top10) + 1
+        for item in raw_news:
+            if len(top10) >= 10:
+                break
+            # 跳过已经在 AI 结果中的 URL
+            existing_urls = {t.get("url", "") for t in top10}
+            if item.url in existing_urls:
+                continue
+            top10.append({
+                "rank": next_rank,
                 "title": item.title,
                 "summary": item.description[:100] if item.description else "",
                 "source": item.source,
                 "url": item.url,
-                "impact_level": "中",
+                "impact_level": "低",
                 "impact_market": [item.market],
-                "impact_reason": "自动收录",
-            }
-            for i, item in enumerate(raw_news[:10])
-        ]
+                "impact_reason": "自动补录",
+            })
+            next_rank += 1
+        # 重新编号
+        for i, t in enumerate(top10):
+            t["rank"] = i + 1
+        result["top10"] = top10
 
     logger.info(f"✅ AI分析完成: TOP{len(top10)}")
     for item in top10[:3]:
