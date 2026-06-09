@@ -1,0 +1,48 @@
+name: Daily Market News TOP10
+
+on:
+  schedule:
+    # 每天北京时间 11:00 (UTC+8) → UTC 03:00
+    # 注意: GitHub Actions cron 使用 UTC 时间
+    - cron: "0 3 * * *"
+  # 支持手动触发（在 GitHub Actions 页面点 Run workflow）
+  workflow_dispatch:
+
+jobs:
+  collect-and-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run news digest
+        env:
+          # 搜索 API（二选一）
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+          BING_SEARCH_API_KEY: ${{ secrets.BING_SEARCH_API_KEY }}
+          # Anthropic API
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # QQ 邮箱
+          QQ_EMAIL_SENDER: ${{ secrets.QQ_EMAIL_SENDER }}
+          QQ_EMAIL_PASSWORD: ${{ secrets.QQ_EMAIL_PASSWORD }}
+          QQ_EMAIL_RECEIVER: ${{ secrets.QQ_EMAIL_RECEIVER }}
+          # 日志
+          LOG_LEVEL: INFO
+        run: python main.py
+
+      - name: Log failure
+        if: failure()
+        run: |
+          echo "❌ 新闻推送任务失败，请检查 GitHub Actions 日志。"
