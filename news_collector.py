@@ -67,9 +67,23 @@ def collect_news() -> list[NewsItem]:
                 else:
                     results = _search_bing(query, market)
                 all_news.extend(results)
-                logger.debug(f"    关键词 [{query}]: 获取 {len(results)} 条")
+                logger.info(f"    关键词 [{query[:20]}...]: 获取 {len(results)} 条")
             except Exception as e:
-                logger.error(f"    搜索失败 [{query}]: {e}")
+                logger.error(f"    搜索失败 [{query[:20]}...]: {e}")
+
+    # 兜底：如果所有搜索都没结果，用宽泛关键词再试一次
+    if not all_news and config.SEARCH_PROVIDER == "newsapi":
+        logger.warning("  所有关键词搜索均为0结果，尝试兜底搜索...")
+        fallback_queries = ["stock market today", "financial news today", "global markets"]
+        for fq in fallback_queries:
+            try:
+                results = _search_newsapi(fq, "全球")
+                all_news.extend(results)
+                logger.info(f"  兜底搜索 [{fq}]: 获取 {len(results)} 条")
+                if all_news:
+                    break
+            except Exception as e:
+                logger.warning(f"  兜底搜索失败 [{fq}]: {e}")
 
     # URL 去重
     seen_urls = set()
@@ -78,11 +92,17 @@ def collect_news() -> list[NewsItem]:
         if item.url not in seen_urls:
             seen_urls.add(item.url)
             deduped.append(item)
-        else:
-            # 如果来自不同市场/关键词的相同URL，保留第一个
-            pass
 
     logger.info(f"  共采集 {len(all_news)} 条原始新闻，去重后 {len(deduped)} 条")
+
+    if not deduped:
+        logger.error("采集结果为0，可能原因：")
+        logger.error("  1. NewsAPI Key 无效或未激活（注册后等5分钟）")
+        logger.error("  2. GitHub Actions 无法访问 newsapi.org（被墙）")
+        logger.error("  3. 免费版每日 100 次额度已用完")
+        logger.error("  建议：换用 Bing Search API 或检查 API Key")
+        return deduped
+
     return deduped
 
 
@@ -91,29 +111,48 @@ def _search_newsapi(query: str, market: str) -> list[NewsItem]:
     通过 NewsAPI 搜索新闻
     API文档: https://newsapi.org/docs/endpoints/everything
     """
-    from_date = (datetime.now(timezone.utc) - timedelta(hours=config.NEWS_LOOKBACK_HOURS)).strftime("%Y-%m-%dT%H:%M:%S")
+    from_date = (datetime.now(timezone.utc) - timedelta(hours=config.NEWS_LOOKBACK_HOURS)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     url = "https://newsapi.org/v2/everything"
     params = {
         "q": query,
         "from": from_date,
         "sortBy": "relevancy",
-        "language": "zh,en",  # 中英文
         "pageSize": config.ARTICLES_PER_QUERY,
         "apiKey": config.NEWSAPI_KEY,
     }
 
-    resp = requests.get(url, params=params, timeout=15)
-    resp.raise_for_status()
-    data = resp.json()
+    try:
+        resp = requests.get(url, params=params, timeout=15)
+        logger.debug(f"  NewsAPI HTTP {resp.status_code}: q={query[:30]}")
 
-    if data.get("status") != "ok":
-        logger.warning(f"NewsAPI 返回非正常状态: {data.get('message', 'unknown')}")
+        if resp.status_code == 401:
+            logger.error("  NewsAPI 认证失败：API Key 无效或未激活（注册后需等待几分钟）")
+            return []
+        if resp.status_code == 429:
+            logger.error("  NewsAPI 请求超限：免费版 100次/天，请等明天重置")
+            return []
+
+        resp.raise_for_status()
+        data = resp.json()
+
+        if data.get("status") != "ok":
+            logger.warning(f"  NewsAPI 错误: {data.get('message', 'unknown')} | code={data.get('code')}")
+            return []
+
+        logger.info(f"  NewsAPI 返回 {len(data.get('articles', []))} 篇 (total={data.get('totalResults', 0)})")
+    except requests.exceptions.Timeout:
+        logger.error("  NewsAPI 请求超时（可能被墙，需代理）")
+        return []
+    except requests.exceptions.ConnectionError:
+        logger.error("  NewsAPI 连接失败（可能被墙，需代理）")
+        return []
+    except Exception as e:
+        logger.error(f"  NewsAPI 未知错误: {e}")
         return []
 
-    articles = data.get("articles", [])
     results = []
-    for art in articles:
+    for art in data.get("articles", []):
         if not art.get("title"):
             continue
         results.append(
