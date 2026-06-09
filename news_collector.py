@@ -108,16 +108,12 @@ def collect_news() -> list[NewsItem]:
 
 def _search_newsapi(query: str, market: str) -> list[NewsItem]:
     """
-    通过 NewsAPI 搜索新闻
-    API文档: https://newsapi.org/docs/endpoints/everything
+    通过 NewsAPI 搜索新闻（免费版仅支持 top-headlines 接口）
+    API文档: https://newsapi.org/docs/endpoints/top-headlines
     """
-    from_date = (datetime.now(timezone.utc) - timedelta(hours=config.NEWS_LOOKBACK_HOURS)).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    url = "https://newsapi.org/v2/everything"
+    url = "https://newsapi.org/v2/top-headlines"
     params = {
         "q": query,
-        "from": from_date,
-        "sortBy": "relevancy",
         "pageSize": config.ARTICLES_PER_QUERY,
         "apiKey": config.NEWSAPI_KEY,
     }
