@@ -8,10 +8,14 @@ on:
   # 支持手动触发（在 GitHub Actions 页面点 Run workflow）
   workflow_dispatch:
 
+# 需要 write 权限用于 git push 报告文件
+permissions:
+  contents: write
+
 jobs:
   collect-and-send:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
@@ -41,6 +45,21 @@ jobs:
           # 日志
           LOG_LEVEL: INFO
         run: python main.py
+
+      - name: Commit and push report to GitHub
+        if: always()  # 即使上一步失败也尝试推送（报告可能已生成）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          # 只有有变更时才 commit 和 push
+          if git diff --staged --quiet; then
+            echo "没有新的报告文件，跳过推送"
+          else
+            git commit -m "📊 Daily report $(date +%Y-%m-%d)"
+            git push origin master
+            echo "✅ 报告已推送到 GitHub"
+          fi
 
       - name: Log failure
         if: failure()
